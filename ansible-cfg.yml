@@ -1,0 +1,22 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Creates {{ title }}
+  hosts: localhost
+  gather_facts: False
+
+  vars_files: ansible-cfg/dirs.yml
+  vars: { title: ansible-cfg dirs }
+
+  tasks:
+
+    - file: { path: '{{ item }}', state: directory }
+      loop: '{{ dirs }}'
+      name: Creates {{ title }}
+
+    - copy: { dest: .gitignore, content: '*~', force: False }
+
+    - lineinfile: { path: .gitignore, line: '{{ item }}' }
+      vars: { more: [ ansible-cfg, ansible.cfg, ext, vault-pass.py, private-repos.yml, keys.yml ] }
+      loop: '{{ gitignore + more }}'
+      name: Do not commit {{ title }}

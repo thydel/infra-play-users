@@ -1,0 +1,68 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- import_playbook: asserts.yml
+
+- hosts: localhost
+  gather_facts: False
+
+  vars_files: [ paths.yml, private-repos.yml ]
+
+  vars:
+    git_config_items: [ user.email, user.signingkey, format.pretty ]
+
+  tasks:
+
+    - { meta: noop, name: top }
+
+    - include_vars: '{{ item }}'
+      loop: [ '{{ private_repos_file }}', '{{ keys_file }}' ]
+      tags: always
+
+    - set_fact:
+        git_ssh_key_file: |-
+          {{ lookup('env', 'GIT_SSH_KEY_FILE') | default('~/.ssh/' ~ default_key, True) }}
+      name: Define git_ssh_key_file
+
+    - file:
+        path: '{{ workdir }}'
+        state: directory
+      name: Create {{ workdir }}
+
+    - git:
+        repo: '{{ item.src }}'
+        version: '{{ item.version }}'
+        dest: '{{ workdir }}/{{ item.name }}'
+        key_file: '{{ git_ssh_key_file }}'
+      loop: '{{ private_repos }}'
+      name: Get private repos
+
+    - git_config:
+        repo: '{{ workdir }}/{{ item.name }}'
+        name: core.sshCommand
+        scope: local
+        value: ssh -i {{ git_ssh_key_file }} -F /dev/null
+      loop: '{{ private_repos }}'
+      name: Configure core.sshCommand
+
+    - git_config:
+        name: '{{ item }}'
+        repo: .
+        scope: local
+      loop: '{{ git_config_items }}'
+      register: git_config
+      name: Get user email from self git config
+      tags: conf
+
+    - git_config:
+        repo: '{{ workdir }}/{{ item[0].name }}'
+        name: '{{ item[1].item }}'
+        scope: local
+        value: '{{ item[1].config_value }}'
+      with_nested:
+        - '{{ private_repos }}'
+        - '{{ git_config.results }}'
+      loop_control:
+        label: '{{ item[0].name }} {{ item[1].item }}'
+      name: Configure private repos from local repos for {{ git_config_items | join(', ') }}
+      tags: conf
