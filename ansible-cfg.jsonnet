@@ -83,7 +83,7 @@ local confs = {
     },
   },
   simple: self.mini + { sections +: { defaults +: defaults.log }},
-  median: self.mini + { sections +: { defaults +: defaults.log + defaults.caching + defaults.filter + defaults.misc }},
+  median: self.mini + { sections +: { defaults +: defaults.log + defaults.roles + defaults.caching + defaults.filter + defaults.misc }},
   full: self.mini + { sections +: { defaults: merge(defaults) }},
 };
 
