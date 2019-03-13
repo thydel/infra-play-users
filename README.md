@@ -53,3 +53,9 @@ nodes-poweredoff.mk main
 ext/nodes-groups/groups4vms-play.yml
 nodes-groups.mk main
 ```
+
+# Generate user data
+
+```
+make -C ext/data-users
+```
