@@ -1,0 +1,5 @@
+---
+
+- src: https://github.com/thydel/ar-sudosh
+  name: sudosh
+  version: tde

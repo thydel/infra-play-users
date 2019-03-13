@@ -1,0 +1,69 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Install roles
+  hosts: all
+  gather_facts: False
+  vars: { requirements: user-sudosh.req.yml }
+  tasks:
+    - set_fact: { force_install: -f }
+      when: force is defined
+      name: get force install param
+    - command: ansible-galaxy install {{ force_install | default('') }} -r {{ requirements }}
+      delegate_to: localhost
+      run_once: True
+      check_mode: False
+      register: galaxy
+      changed_when: galaxy.stdout_lines | map('regex_search', '^- extracting ') | select('string') | list | length > 0
+      name: Use galaxy to install requirements
+
+- name: Add sudosh
+  hosts: '!g_poweredoff'
+  gather_facts: True
+  tags: main
+
+  vars_files: [ paths.yml ]
+
+  vars:
+    users_file: epi_user.json
+    user_groups_cmd: epi_user_groups.jsonnet
+
+  tasks:
+
+    - { meta: noop, vars: { macros: &loo { delegate_to: localhost, run_once: True }}}
+
+    - include_vars: { file: '{{ [ data_users, users_file ] | join("/") }}' }
+      <<: *loo
+      name: get users data
+
+    - name: get list of login from data and node
+      when: user is not defined
+      block:
+
+      - vars: { tmp: '{{ lookup("pipe", [ data_users, user_groups_cmd ] | join("/")) }}' }
+        set_fact: { user_groups: '{{ tmp.epi_groups }}' }
+        <<: *loo
+        name: get user groups data
+
+      - set_fact: { sudosh_logins: '{{ user_groups.sudosh.users | map("extract", users.trigram) | list | map(attribute="login") | list }}' }
+        <<: *loo
+        name: get sudosh user group
+
+      - set_fact: { node_logins: '{{ lookup("dict", ansible_facts.ohai_etc.passwd) | map(attribute="key") | list }}' }
+        name: get node logins list
+
+      - set_fact: { logins: '{{ sudosh_logins | intersect(node_logins) }}' }
+        name: intersect node logins with sudosh 
+
+    - set_fact: { logins: [ '{{ user }}' ] }
+      when: user is defined
+      <<: *loo
+      name: get list of login from one user arg
+
+    - include_role: { name: sudosh }
+      vars: { users: '{{ logins }}' }
+      name: apply sudosh role
+
+    - meta: end_play
