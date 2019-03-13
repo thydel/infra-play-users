@@ -1,0 +1,27 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Show user info
+  hosts: localhost
+  gather_facts: True
+
+  vars_files: [ paths.yml ]
+
+  tasks:
+
+    - include_vars: { name: epi, file: '{{ data_users }}/epi_user.json' }
+
+    - set_fact: { default: { login: adrian }}
+    - set_fact: { user: '{{ epi.users.login[login|default(default.login)] }}' }
+    - set_fact: { password_args: '{{ "users/linux/" + user.trigram + " directory=" + password_store_dir }}' }
+    - set_fact: { md5_args: '{{ password_args + " subkey=md5" }}' }
+    - set_fact: { show: '{{ user | combine({ "password": password, "md5": md5 }) }}' }
+      vars:
+        password: '{{ lookup("passwordstore", password_args) }}'
+        md5: '{{ lookup("passwordstore", md5_args) }}'
+
+    - debug: { var: show }
+
+    - meta: end_play
