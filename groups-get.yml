@@ -1,0 +1,22 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: asserts.yml, when: assert is defined, vars: { Hosts: localhost }}
+
+- name: Get groups data
+  hosts: localhost
+  gather_facts: True
+  tags: main
+
+  vars_files: [ paths.yml ]
+
+  tasks:
+
+    - set_fact: { a_group: '{{ group | default("all") }}' }
+      name: Set all as default group
+
+    - include_tasks: include/groups-get.yml
+      vars: { group: '{{ a_group }}' }
+
+    - debug: { var: logins }
+
