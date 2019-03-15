@@ -1,0 +1,14 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Setup user keys
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - include_tasks: include/user-get.yml
+    - include_tasks: include/user-set-keys.yml
