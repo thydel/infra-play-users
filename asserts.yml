@@ -16,7 +16,7 @@
         run_once: True
 
 - name: &version_check Assertions for ansible versions and private files
-  hosts: all
+  hosts: '{{ Hosts | default("all") }}'
   gather_facts: False
   tags: always
 
@@ -69,7 +69,7 @@
         name: Assert {{ file }}
 
 - name: &agent_check Assertions for SSH and GPG agents
-  hosts: all
+  hosts: '{{ Hosts | default("all") }}'
   gather_facts: False
   tags: always
   tasks:
