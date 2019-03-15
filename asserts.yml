@@ -1,8 +1,10 @@
 #!/usr/bin/env ansible-playbook
 ---
 
+# env DISPLAY_SKIPPED_HOSTS=False
+
 - name: Defines YAML macros
-  hosts: localhost
+  hosts: all
   gather_facts: False
   vars:
     macros:
