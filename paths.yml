@@ -9,3 +9,6 @@ password_store: '{{ workdir }}/password-store'
 password_store_dir: '{{ playbook_dir }}/{{ password_store }}/password-store' # passwordstore lookup needs full path
 gpg_store: '{{ workdir }}/gpg-store'
 data_users: '{{ workdir }}/data-users'
+
+users_file: epi_user.json
+user_groups_cmd: epi_user_groups.jsonnet
