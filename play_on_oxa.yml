@@ -1,0 +1,11 @@
+---
+
+- hosts: 'g_oxa:!g_poweredoff:!n_s1adm'
+  gather_facts: False
+  run_once: True
+  tasks:
+    - set_fact: { Hosts: '{{ play_hosts | sort }}' }
+      delegate_to: localhost
+      delegate_facts: True
+    - set_fact: { all: '{{ groups.g_oxa | difference(groups.g_poweredoff | union(groups.n_s1adm)) }}' }
+    - assert: { that: 'all | difference(play_hosts) != []' }
