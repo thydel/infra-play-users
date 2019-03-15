@@ -1,0 +1,19 @@
+---
+
+- assert: { that: group is defined }
+  name: Assert group
+
+- include_tasks: users-get.yml
+
+- vars: { tmp: '{{ lookup("pipe", [ data_users, user_groups_cmd ] | join("/")) }}' }
+  set_fact: { user_groups: '{{ tmp.epi_groups }}' }
+  name: Get user groups data
+
+- assert: { that: "user_groups[group] is defined" }
+  name: Assert group exist
+
+- set_fact: { trigrams: '{{ user_groups[group].users }}' }
+  name: Get group trigrams
+
+- set_fact: { logins: '{{ trigrams | map("extract", users.trigram) | list | map(attribute="login") | list }}' }
+  name: Get group logins

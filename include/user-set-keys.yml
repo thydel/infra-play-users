@@ -1,0 +1,20 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { debug: { var: user }, when: show is defined }
+
+- set_fact: { items: '{{ [ _item ] | product(user.ssh_keys[_item]) | list }}' }
+  loop: [ present, absent ]
+  loop_control: { loop_var: _item }
+  register: results
+  name: Build loop
+
+- name: Add and remove keys
+  authorized_key:
+    user: '{{ login }}'
+    key: '{{ _item.1.key }}'
+    state: '{{ _item.0 }}'
+  become: True
+  loop: '{{ results.results | map(attribute="ansible_facts.items") | list | flatten(levels=1)}}'
+  loop_control: { loop_var: _item, label: '{{ login + s + _item.0 + s + _item.1.key[-64:] }}' }
+  vars: { login: '{{ user.login }}', s: ' ' }

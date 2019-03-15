@@ -1,0 +1,4 @@
+---
+
+- include_vars: { file: '{{ [ data_users, users_file ] | join("/") }}' }
+  name: Get users data
