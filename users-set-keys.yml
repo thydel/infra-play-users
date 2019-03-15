@@ -1,0 +1,19 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Setup users keys from group
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - include_tasks: include/groups-get.yml
+
+    - include_tasks: include/user-set-keys.yml
+      vars: { user: '{{ users.trigram[item] }}' }
+      loop: '{{ trigrams }}'
+
+    - meta: end_play
