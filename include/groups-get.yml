@@ -13,7 +13,7 @@
   name: Assert group exist
 
 - set_fact: { trigrams: '{{ user_groups[group].users }}' }
-  name: Get group trigrams
+  name: Define group trigrams
 
 - set_fact: { logins: '{{ trigrams | map("extract", users.trigram) | list | map(attribute="login") | list }}' }
-  name: Get group logins
+  name: Define group logins
