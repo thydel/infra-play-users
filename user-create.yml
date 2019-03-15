@@ -1,0 +1,35 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Create user
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - include_tasks: include/user-get.yml
+    - include_tasks: include/user-get-password.yml
+
+    - user:
+        name: '{{ login }}'
+        password: '{{ md5 }}'
+        update_password: '{{ update_password | default("on_create") }}'
+        shell: /bin/bash
+      become: True
+      name: Create user
+
+    - { meta: noop, vars: { macros: &ro { changed_when: False, check_mode: False }}}
+
+    - command: getent passwd {{ login }}
+      register: getent
+      failed_when: getent.rc == 1 or getent.rc == 3
+      <<: *ro
+      name: Existp user 
+
+    - include_tasks: include/user-set-keys.yml
+      when: getent.stdout_lines | count
+
+    - meta: end_play
