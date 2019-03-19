@@ -4,12 +4,14 @@
 - name: Adds user to group (default ssh)
   hosts: all
   gather_facts: False
+  vars_files: [ paths.yml ]
 
   tasks:
 
     - { meta: noop, vars: { macros: &loo { delegate_to: localhost, run_once: True }}}
     - { assert: { that: 'groups.all | difference(play_hosts) != []' }, <<: *loo, name: Assert hosts subset }
-    - { assert: { that: user is defined }, <<: *loo, name: Assert user }
+
+    - include_tasks: include/user-get.yml
 
     - set_fact: { group: '{{ group | default("ssh")}}' }
       name: Default group to ssh
@@ -20,7 +22,7 @@
     - getent: { database: group, key: '{{ group }}' }
       name: Get users already in group
 
-    - set_fact: { missing: '{{ [ user ] | difference(getent_group[group][2].split(",")) }}' }
+    - set_fact: { missing: '{{ [ login ] | difference(getent_group[group][2].split(",")) }}' }
       name: Find if user not yet in group
 
     - { debug: { var: missing }, when: debug }
