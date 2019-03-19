@@ -1,0 +1,31 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: play_on_epi.yml, when: epi is defined }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Adds user to etc groups
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - include_tasks: include/user-get.yml
+    - include_tasks: include/user-etc-groups-get.yml
+
+    - group:
+        name: '{{ item }}'
+        system: True
+      with_items: '{{ user_etc_groups }}'
+      become: True
+      name: Creates groups
+
+    - user:
+        name: '{{ login }}'
+        groups: '{{ user_etc_groups }}'
+        append: True
+      become: True
+      name: Adds groups {{ user_etc_groups | join(",") }} to user {{ login }}
+
+    - meta: end_play
