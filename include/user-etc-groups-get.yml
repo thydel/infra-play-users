@@ -1,0 +1,14 @@
+---
+
+- assert: { that: trigram is defined }
+  name: Assert trigram
+
+- vars: { tmp: '{{ lookup("pipe", [ data_users, user_groups_cmd ] | join("/")) }}' }
+  set_fact: { user_groups: '{{ tmp.epi_user_groups }}' }
+  name: Get user etc groups data
+
+- assert: { that: "user_groups[trigram] is defined" }
+  name: Assert user_groups exist
+
+- set_fact: { user_etc_groups: '{{ user_groups[trigram] }}' }
+  name: Define user_groups
