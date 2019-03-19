@@ -17,6 +17,7 @@
     - user:
         name: '{{ login }}'
         password: '{{ md5 }}'
+        comment: '{{ name }}'
         update_password: '{{ update_password | default("on_create") }}'
         shell: /bin/bash
       become: True

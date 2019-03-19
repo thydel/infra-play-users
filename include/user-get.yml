@@ -14,4 +14,7 @@
 - set_fact: { login: '{{ user.login }}' }
   name: Define login
 
+- set_fact: { name: '{{ user.name }}' }
+  name: Define name
+
 - { debug: { var: user }, when: show is defined }
