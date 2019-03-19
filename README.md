@@ -32,13 +32,14 @@ private-repos-get.yml
 # Assert ssh-agent and gpg-agent
 
 ```
-assert.yml
+asserts.yml
 ```
 
 # Generate private inventory
 
 ```
-nodes-oxa.mk
+nodes-oxa.mk main
+nodes-epiconcept.net.mk main
 ```
 
 # Generate poweredoff inventory
@@ -50,6 +51,10 @@ nodes-poweredoff.mk main
 # Generate groups inventory
 
 ```
+make -C ext/nodes-groups -f ansible-cfg.mk nodes_groups
+proot -w ext/nodes-groups ./ansible-cfg.yml
+make -C ext/nodes-groups -f local.mk main
+make -C ext/nodes-groups -f requirements.mk main
 ext/nodes-groups/groups4vms-play.yml
 nodes-groups.mk main
 ```
