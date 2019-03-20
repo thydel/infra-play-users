@@ -18,5 +18,5 @@
     - include_tasks: include/groups-get.yml
       vars: { group: '{{ a_group }}' }
 
-    - debug: { var: logins }
+    - debug: { var: group_logins }
 
