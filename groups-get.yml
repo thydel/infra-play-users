@@ -19,4 +19,6 @@
       vars: { group: '{{ a_group }}' }
 
     - debug: { var: group_logins }
+    - debug: { var: group_trigrams }
+    - debug: { var: group_emails }
 

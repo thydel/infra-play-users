@@ -17,3 +17,6 @@
 
 - set_fact: { group_logins: '{{ group_trigrams | map("extract", users.trigram) | list | map(attribute="login") | list }}' }
   name: Define group logins
+
+- set_fact: { group_emails: '{{ group_trigrams | map("extract", users.trigram) | list | map(attribute="mail") | list }}' }
+  name: Define group emails
