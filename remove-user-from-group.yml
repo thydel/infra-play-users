@@ -1,0 +1,38 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Remove user from group (default ssh)
+  hosts: all
+  gather_facts: False
+  vars_files: [ paths.yml ]
+
+  tasks:
+
+    - { meta: noop, vars: { macros: &loo { delegate_to: localhost, run_once: True }}}
+    - { meta: noop, vars: { macros: &ro { changed_when: False, check_mode: False }}}
+    - { assert: { that: 'groups.all | difference(play_hosts) != []' }, <<: *loo, name: Assert hosts subset }
+
+    - include_tasks: include/user-get.yml
+
+    - set_fact: { group: '{{ group | default("ssh")}}' }
+      name: Default group to ssh
+
+    - set_fact: { debug: '{{ debug | default(False) }}' }
+      name: Default debug to False
+
+    - command: groups {{ login }}
+      register: groups_cmd
+      <<: *ro
+      name: Get groups of user {{ login }}
+
+    - { debug: { var: groups_cmd }, when: debug }
+
+    - command: deluser {{ login }} {{ group }}
+      register: deluser
+      failed_when: deluser.rc not in [ 0, 2, 6 ]
+      changed_when: deluser.rc == 0
+      become: True
+      when: group in groups_cmd.stdout.split(":")[1].split(" ")
+      name: Remove user {{ login }} from group {{ group }}
+
+    - { debug: { var: deluser }, when: debug }
