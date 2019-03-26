@@ -10,5 +10,15 @@
   vars_files: [ paths.yml ]
   tasks:
 
+    - { meta: noop, vars: { macros: &ro { changed_when: False, check_mode: False }}}
+
     - include_tasks: include/user-get.yml
+
+    - command: getent passwd {{ login }}
+      register: getent
+      <<: *ro
+      failed_when: getent.rc == 1 or getent.rc == 3
+      name: User existp
+
     - include_tasks: include/user-set-keys.yml
+      when: getent.stdout_lines | count
