@@ -1,7 +1,7 @@
 #!/usr/bin/env ansible-playbook
 ---
 
-- name: Remove user from group (default ssh)
+- name: Makes a group of nodes where user exists
   hosts: all
   gather_facts: False
   vars_files: [ paths.yml ]
@@ -10,6 +10,32 @@
 
     - { meta: noop, vars: { macros: &loo { delegate_to: localhost, run_once: True }}}
     - { meta: noop, vars: { macros: &ro { changed_when: False, check_mode: False }}}
+    - { assert: { that: 'groups.all | difference(play_hosts) != []' }, <<: *loo, name: Assert hosts subset }
+
+    - include_tasks: include/user-get.yml
+
+    - command: getent passwd {{ login }}
+      register: getent
+      <<: *ro
+      failed_when: getent.rc == 1 or getent.rc == 3
+      name: User existp
+
+    - set_fact: { user_exists: True }
+      when: getent.stdout_lines | count
+
+    - group_by: { key: 'user_{{ user_exists }}' }
+
+    - debug: { msg: 'user {{ login }} exists on {{ groups["user_True"] | join(", ") }}' }
+      <<: *loo
+      when: groups['user_True'] is defined
+
+- name: Remove user from group (default ssh)
+  hosts: user_True
+  gather_facts: False
+  vars_files: [ paths.yml ]
+
+  tasks:
+
     - { assert: { that: 'groups.all | difference(play_hosts) != []' }, <<: *loo, name: Assert hosts subset }
 
     - include_tasks: include/user-get.yml
