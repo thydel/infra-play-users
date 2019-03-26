@@ -1,0 +1,9 @@
+---
+
+- hosts: charenton.tld
+  gather_facts: False
+  run_once: True
+  tasks:
+    - set_fact: { Hosts: '{{ play_hosts | sort }}' }
+      delegate_to: localhost
+      delegate_facts: True
