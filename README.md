@@ -19,7 +19,8 @@ unverbose-assert.mk main
 
 # Define private variables
 
-- Define `password-store`, `data-users`, `data-nodes`, `nodes-groups` in `private-repos.yml`
+- Define `password-store`, `data-users`, `data-nodes`, `nodes-groups`
+  in `private-repos.yml` (starting from private `infra-data-repos`)
 - Optionnaly define `gpg-store`
 - Define `default_key` in `keys.yml` (eg `default_key: t.delamare@epiconcept.fr`)
 
