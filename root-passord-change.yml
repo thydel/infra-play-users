@@ -1,0 +1,16 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: play_on_epi.yml, when: epi is defined }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: &name Change root password
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  become: True
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - include_tasks: include/root-get-password.yml
+    - { user: { name: root, update_password: always, password: '{{ sha512 }}' }, name: *name }
