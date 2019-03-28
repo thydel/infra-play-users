@@ -1,0 +1,59 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: play_on_oxa.yml }
+- { import_playbook: play_on_epi.yml, when: epi is defined }
+- { import_playbook: asserts.yml, when: assert is defined }
+
+- name: Generate root password
+  hosts: '{{ hostvars.localhost.Hosts }}'
+  gather_facts: False
+  vars_files: [ paths.yml ]
+  tasks:
+
+    - { meta: noop, vars: { macros: &ron { changed_when: False, check_mode: False, no_log: True }}}
+    - { meta: noop, vars: { macros: &pass { PASSWORD_STORE_GIT: '{{ password_store }}', PASSWORD_STORE_DIR: '{{ password_store_dir }}' }}}
+
+    - set_fact: { pass_name: '{{ "/roots/linux/root@" + inventory_hostname }}' }
+
+    - stat: { path: '{{ password_store_dir + pass_name + ".gpg" }}' }
+      register: st
+      delegate_to: localhost
+      name: Stat user password file
+
+    - when: st.stat.exists == False or force is defined
+      delegate_to: localhost
+      name: Creation block
+      block:
+
+      - { name: Generate password using pwgen,                register: pwgen,    <<: *ron, command: 'pwgen {{ 10 + 2 | random }} 1' }
+      - { name: Generate sha-512 for password using mkpasswd, register: mkpasswd, <<: *ron, command: 'mkpasswd -m sha-512 {{ pwgen.stdout }}' }
+      - { name: Get date,                                     register: date,     <<: *ron, command: date +%F  }
+
+      - command:
+        args:
+          argv: '{{ pass_cmd  + [ pass_name ] }}'
+          stdin: |
+            {{ passw }}
+            sha512: {{ sha512 }}
+            login: {{ login }}
+            node: {{ node }}
+            date: {{ date.stdout }}
+        vars:
+          pass_cmd:  [ pass, insert, -m ]
+          pass_name: '{{ pass_name }}'
+          login:     root
+          node:      '{{ inventory_hostname }}'
+          passw:     '{{ pwgen.stdout }}'
+          sha512:    '{{ mkpasswd.stdout }}'
+          date:      '{{ date.stdout }}'
+        environment: { <<: *pass }
+        notify: &push Git push generated root passwords
+        name: Store password and SHA512 using pass
+
+  handlers:
+
+    - name: *push
+      command: pass git push
+      environment: { <<: *pass }
+      delegate_to: localhost
