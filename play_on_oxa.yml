@@ -1,6 +1,6 @@
 ---
 
-- hosts: 'g_oxa:!g_poweredoff:!n_s1adm'
+- hosts: 'rebond2:g_oxa:!g_poweredoff:!n_s1adm'
   gather_facts: False
   run_once: True
   tasks:
