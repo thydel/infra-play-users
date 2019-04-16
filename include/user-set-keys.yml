@@ -11,7 +11,7 @@
 
 - name: Add and remove keys
   authorized_key:
-    user: '{{ login }}'
+    user: '{{ shared if shared is defined else login }}'
     key: '{{ _item.1.key }}'
     state: '{{ _item.0 }}'
   become: True
