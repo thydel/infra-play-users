@@ -41,6 +41,7 @@ asserts.yml
 ```
 nodes-oxa.mk main
 nodes-epiconcept.net.mk main
+nodes-charenton.tld.mk main
 ```
 
 # Generate poweredoff inventory
