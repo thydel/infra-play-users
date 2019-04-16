@@ -1,0 +1,23 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- { import_playbook: asserts.yml, when: assert is defined, vars: { Hosts: localhost } }
+
+- name: &name Add and remove keys of all users in build group on build user
+  hosts: g_build
+  gather_facts: False
+
+  vars_files:
+
+    - paths.yml
+    - '{{ [ data_users, users_file ] | join("/") }}'
+    - '{{ [ data_users, user_groups_file ] | join("/") }}'
+
+  tasks:
+
+    - name: *name
+      include_tasks: include/user-set-keys.yml
+      vars:
+        user: '{{ users.trigram[item] }}'
+        shared: epiconcept_build
+      with_items: '{{ epi_groups.build.users }}'
