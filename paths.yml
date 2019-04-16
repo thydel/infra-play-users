@@ -12,3 +12,4 @@ data_users: '{{ workdir }}/data-users'
 
 users_file: epi_user.json
 user_groups_cmd: epi_user_groups.jsonnet
+user_groups_file: epi_user_groups.json
