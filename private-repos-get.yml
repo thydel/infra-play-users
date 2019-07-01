@@ -1,7 +1,7 @@
 #!/usr/bin/env ansible-playbook
 ---
 
-- import_playbook: asserts.yml
+#- import_playbook: asserts.yml
 
 - hosts: localhost
   gather_facts: False
