@@ -2,6 +2,7 @@
 ---
 
 - { import_playbook: play_on_oxa.yml }
+- { import_playbook: play_on_char.yml, when: char is defined }
 - { import_playbook: play_on_epi.yml, when: epi is defined }
 - { import_playbook: asserts.yml, when: assert is defined }
 

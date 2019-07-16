@@ -1,7 +1,6 @@
 ---
 
-#- hosts: epiconcept.net
-- hosts: rebond2:debian-build2:misc
+- hosts: epiconcept.net
   gather_facts: False
   run_once: True
   tasks:
