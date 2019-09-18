@@ -1,8 +1,5 @@
 ---
 
-private_repos_file: private-repos.yml
-keys_file: keys.yml
-
 workdir: ext
 data_nodes: '{{ workdir }}/data-nodes'
 password_store: '{{ workdir }}/password-store'

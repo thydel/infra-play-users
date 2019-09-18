@@ -1,6 +1,6 @@
 ---
 
-- hosts: charenton.tld
+- hosts: n_charenton
   gather_facts: False
   run_once: True
   tasks:

@@ -1,68 +1,49 @@
-# Generate ansible config
+# Use gmk
 
 ```
-ansible-cfg.mk median
-ansible-cfg.yml
+gmk self/config
+gmk mailmap
+gmk exclude
+gmk conf
+gmk mailmaps
 ```
 
-# Generate minimal inventory
+# Generate inventory
 
 ```
-node-local.mk main
+make -f inventory.mk main
 ```
 
-# Less verbose assert
+# Choose and configure ansible
 
 ```
-unverbose-assert.mk main
+make -C ext/ansible-cfg install
+ansible-cfg median
+source <(use-ansible)
+ansible-cfg exclude
 ```
 
-# Define private variables
-
-- Define `password-store`, `data-users`, `data-nodes`, `nodes-groups`
-  in `private-repos.yml` (starting from private `infra-data-repos`)
-- Optionnaly define `gpg-store`
-- Define `default_key` in `keys.yml` (eg `default_key: t.delamare@epiconcept.fr`)
-
-# Get private stuff
+# Use ansible with inventory
 
 ```
-private-repos-get.yml
-```
-
-# Assert ssh-agent and gpg-agent
-
-```
-asserts.yml
-```
-
-# Generate private inventory
-
-```
-nodes-oxa.mk main
-nodes-epiconcept.net.mk main
-nodes-charenton.tld.mk main
-```
-
-# Generate poweredoff inventory
-
-```
-nodes-poweredoff.mk main
-```
-
-# Generate groups inventory
-
-```
-make -C ext/nodes-groups -f ansible-cfg.mk nodes_groups
-proot -w ext/nodes-groups ./ansible-cfg.yml
-make -C ext/nodes-groups -f local.mk main
-make -C ext/nodes-groups -f requirements.mk main
-ext/nodes-groups/groups4vms-play.yml
-nodes-groups.mk main
+source <(use-ansible)
+ansible 'n_admin2:!g_poweredoff' -om ping
 ```
 
 # Generate user data
 
 ```
 make -C ext/data-users
+```
+
+# Get roles
+
+```
+requirements.mk main
+```
+
+# Assert ssh-agent and gpg-agent
+
+```
+asserts.yml
 ```

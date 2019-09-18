@@ -1,11 +1,11 @@
 ---
 
-- assert: { that: trigram is defined }
+- assert: { quiet: True, that: trigram is defined }
   name: Assert trigram
 
 - include_tasks: users-get.yml
 
-- assert: { that: 'users.trigram[trigram] is defined' }
+- assert: { quiet: True, that: 'users.trigram[trigram] is defined' }
   name: Assert trigram exists
 
 - set_fact: { user: '{{ users.trigram[trigram] }}' }

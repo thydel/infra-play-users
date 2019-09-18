@@ -1,6 +1,6 @@
 ---
 
-- assert: { that: etc_group is defined }
+- assert: { quiet: True, that: etc_group is defined }
   name: Assert tc_group
 
 - include_tasks: users-get.yml
@@ -9,7 +9,7 @@
   set_fact: { etc_groups: '{{ tmp.epi_etc_groups }}' }
   name: Get etc groups data
 
-- assert: { that: "etc_groups[etc_group] is defined" }
+- assert: { quiet: True, that: "etc_groups[etc_group] is defined" }
   name: Assert etc group exist
 
 - set_fact: { etc_group_trigrams: '{{ etc_groups[etc_group].users }}' }

@@ -1,6 +1,6 @@
 ---
 
-- assert: { that: group is defined }
+- assert: { quiet: True, that: group is defined }
   name: Assert group
 
 - include_tasks: users-get.yml
@@ -9,7 +9,7 @@
   set_fact: { _groups: '{{ tmp.epi_groups }}' }
   name: Get user groups data
 
-- assert: { that: "_groups[group] is defined" }
+- assert: { quiet: True, that: "_groups[group] is defined" }
   name: Assert group exist
 
 - set_fact: { group_trigrams: '{{ _groups[group].users }}' }
