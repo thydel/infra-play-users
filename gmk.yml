@@ -2,6 +2,7 @@
 
 - type: self
   name: infra-play-users
+  remote: git@github.com:thydel/infra-play-users.git
   env: thydel
 
 - macros:
