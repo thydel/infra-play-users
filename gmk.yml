@@ -41,7 +41,7 @@
 
 - git: git@github.com:Epiconcept-Paris/infra-data-ips.git
   name: data-ips
-  version: tde
+  version: master
   conf: thyepi
 
 - git: git@github.com:thydel/infra-ips.git
