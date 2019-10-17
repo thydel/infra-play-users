@@ -51,7 +51,7 @@
 
 - git: git@github.com:Epiconcept-Paris/infra-data-inventories.git
   name: inventories
-  version: tde
+  version: master
   conf: thyepi
 
 - git: git@github.com:thydel/ansible-cfg.git
@@ -61,7 +61,7 @@
 - git: git@github.com:Epiconcept-Paris/infra-data-users.git
   name: data-users
   conf: thyepi
-  version: gmk
+  version: master
 
 - git: git@github.com:Epiconcept-Paris/infra-password-store.git
   name: password-store
