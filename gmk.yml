@@ -49,14 +49,15 @@
   conf: thydel
   links: data-ips data-misc
 
+- git: git@github.com:Epiconcept-Paris/infra-data-nodes-groups.git
+  name: nodes-groups
+  conf: thyepi
+  version: master
+
 - git: git@github.com:Epiconcept-Paris/infra-data-inventories.git
   name: inventories
   version: master
   conf: thyepi
-
-- git: git@github.com:thydel/ansible-cfg.git
-  name: ansible-cfg
-  conf: thydel
 
 - git: git@github.com:Epiconcept-Paris/infra-data-users.git
   name: data-users
@@ -67,3 +68,7 @@
   name: password-store
   conf: thyepi
   version: master
+
+- git: git@github.com:thydel/ansible-cfg.git
+  name: ansible-cfg
+  conf: thydel
