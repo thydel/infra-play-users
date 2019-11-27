@@ -10,17 +10,27 @@
   hosts: '{{ hostvars.localhost.Hosts }}'
   gather_facts: False
   vars_files: [ paths.yml ]
+  vars:
+    sudosh: /usr/local/bin/sudosh
+    bash: /bin/bash
   tasks:
 
     - include_tasks: include/user-get.yml
     - include_tasks: include/user-get-password.yml
+
+    - stat: { path: '{{ sudosh }}' }
+      register: st
+      name: See if sudosh installed
+
+    - set_fact: { shell: '{{ sudosh if st.stat.exists else bash }}' }
+      name: Choose login shell
 
     - user:
         name: '{{ login }}'
         password: '{{ md5 }}'
         comment: '{{ name }}'
         update_password: '{{ update_password | default("on_create") }}'
-        shell: /bin/bash
+        shell: '{{ shell }}'
       become: True
       name: Create user
 
