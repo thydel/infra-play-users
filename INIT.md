@@ -20,10 +20,8 @@ ansible-cfg exclude
 
 [ansible-cfg]: https://github.com/thydel/ansible-cfg "github repo"
 
-# Generate inventory
+# Make and install everything
 
-```:
-: make -f inventory.mk main # broken
-make -C ext/inventories install
-ln -s /usr/local/etc/epi/inventory
+```
+make main
 ```
