@@ -5,7 +5,6 @@
 ```
 gmk init self/config mailmap
 gmk conf
-
 ```
 
 ## Choose and configure ansible
@@ -23,6 +22,8 @@ ansible-cfg exclude
 
 # Generate inventory
 
-```
-make -f inventory.mk main
+```:
+: make -f inventory.mk main # broken
+make -C ext/inventories install
+ln -s /usr/local/etc/epi/inventory
 ```
