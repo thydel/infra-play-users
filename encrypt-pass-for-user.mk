@@ -34,7 +34,7 @@ user ?= TDE
 password-store := ext/password-store/password-store
 
 # git@github.com:Epiconcept-Paris/infra-data-users.git
-data := /usr/local/etc/epi/repo/
+data := /usr/local/etc/epi/repo
 users := $(data)/infra-data-users/epi_user.js
 
 # Do not use amin keys in user authorized key list
