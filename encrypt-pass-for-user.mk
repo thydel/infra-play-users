@@ -46,19 +46,20 @@ exclude[CGD] := .
 # Default private key
 private[$(user)] := ~/.ssh/id_rsa
 # My key was generated using
-# $(keys):; $(eval export p := $(shell pass key/$@)) ssh-keygen -o -a 64 -N $$p -C $@ -f $@
-#
+#   $(keys):; $(eval export p := $(shell pass key/$@)) ssh-keygen -o -a 64 -N $$p -C $@ -f $@
 # Convert OpenSSH to PEM (keeping same password)
-#
-# cp ~/.ssh/t.delamare@epiconcept.fr tmp/t.delamare@epiconcept.fr.pem
-# ssh-keygen -f tmp/t.delamare@epiconcept.fr.pem -m pem -p
+#   cp ~/.ssh/t.delamare@epiconcept.fr tmp/t.delamare@epiconcept.fr.pem
+#   ssh-keygen -f tmp/t.delamare@epiconcept.fr.pem -m pem -p
 private[TDE] := tmp/t.delamare@epiconcept.fr.pem
 
+# Get first non excluded key
 jq = [.users.trigram.$(strip $1).ssh_keys.present[].key | $(exclude[$(user)])][0]
-
 tmp/$(user)-id_rsa.pub: $(users) tmp/.stone $(self); jq -r '$(call jq, $(user))' $< > $@
+
+# Convert the public key into PEM format
 tmp/$(user)-id_rsa.pub.pem: tmp/$(user)-id_rsa.pub; ssh-keygen -f $< -e -m PKCS8 > $@
 
+# Use the public pem file to encrypt a the user password
 export PASSWORD_STORE_DIR := $(abspath $(password-store))
 ~  := tmp/$(user)-mdp.txt
 $~  =   pass users/linux/$(user) | head -1
@@ -68,6 +69,7 @@ $~: tmp/$(user)-id_rsa.pub.pem; $($@)
 
 main: tmp/$(user)-mdp.txt
 
+decrypt.help := Show how to decrypt using the private key
 decrypt := openssl base64 -d | openssl rsautl -decrypt -inkey $(private[$(user)])
 # Will ask the private key password
 decrypt: tmp/$(user)-mdp.txt; @echo '< $< $($@)'
@@ -77,7 +79,7 @@ $(self)                          | # default to help (this help)
 $(self) main user=$$trigram      | # generates a base64 tmp/$$user-mdp.txt
 __                               | # contains the $$user password
 __                               | # encrypted using his public ssh key
-$(self) decrypt user=$$trigram   | # output a cmd line to decrypt
+$(self) decrypt user=$$trigram   | # $(decrypt.help)
 endef
 
 help: $(self); @echo; echo '$($@)' | column -ts '|' | tr _ ' '
