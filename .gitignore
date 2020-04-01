@@ -1,6 +1,7 @@
 *~
 .hide
 inventory
+data
 .cache
 plugins
 log
