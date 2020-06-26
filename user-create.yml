@@ -22,7 +22,7 @@
       register: st
       name: See if sudosh installed
 
-    - set_fact: { shell: '{{ sudosh if st.stat.exists else bash }}' }
+    - set_fact: { shell: '{{ sudosh if st.stat.exists and inventory_hostname != "super1" else bash }}' }
       name: Choose login shell
 
     - user:
