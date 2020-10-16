@@ -1,6 +1,6 @@
 #!/usr/local/bin/jq -nrf
 
-def inventory: "inventory='" + join(" ") + "'";
+def inventory: "inventory='" + join(":") + "'";
 def md: "md='" + (map("`" + . + "`") | join(", ") + "'");
 def yml: "yml='" + "[" + join(", ") + "]'";
 
