@@ -1,0 +1,24 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- hosts: g_default
+  gather_facts: true
+  become: true
+  
+  tasks:
+    
+    - name: Ensure {{ file }} is immutable
+      vars:
+        file: .ssh/authorized_keys
+        action: '{% if reset is defined %}-{% else %}+{% endif %}'
+        home: '{% if ohai_etc.passwd[user] is not defined %}{{ lookup("lines", "! : user " + user + " unknown") }}{% else %}{{ ohai_etc.passwd[user].dir }}{% endif %}'
+        paths: [ '{{ file.split("/")[0] }}', '{{ file }}' ]
+        users: '{% if one is defined %}{{ [ one ] }}{% else %}{{ ohai_etc.group.ssh.members | difference(ohai_etc.group.sudo.members) }}{% endif %}'
+        user: '{{ item[0] }}'
+        path: '{{ item[1] }}'
+      loop: '{{ users | product(paths) }}'
+      file:
+        path: '{{ home }}/{{ path }}'
+        attr: '{{ action }}i'
+      register: ret
+      changed_when: 'action == "+" and "i" not in ret.diff.before.attributes or action == "-" and "i" in ret.diff.before.attributes'
