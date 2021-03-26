@@ -12,8 +12,8 @@ Usually used before [immutable.yml][] (see [immutable.md][])
 - WARNING: default to all avalaible node
 
 ```bash
-fix-authorized_keys.yml -l pretstfnta1 -e one=kevin
-fix-authorized_keys.yml -l pretstfnta1
+fix-authorized_keys.yml -l $node -e one=$user
+fix-authorized_keys.yml -l $node
 ```
 
 [immutable.md]:

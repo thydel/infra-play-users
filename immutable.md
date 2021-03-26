@@ -15,9 +15,9 @@ May required that [fix-authorized_keys.yml][] be run first to create
 missing `.ssh/authorized_keys` (see [fix-authorized_keys.md][])
 
 ```bash
-./immutable.yml -l pretstfnta1 -e one=kevin
-./immutable.yml -l pretstfnta1 -e one=kevin -e reset
-./immutable.yml -l pretstfnta1
+./immutable.yml -l $node -e one=$user
+./immutable.yml -l $node -e one=$user -e reset
+./immutable.yml -l $node
 ```
 
 [immutable.md]:
