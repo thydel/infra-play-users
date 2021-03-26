@@ -1,4 +1,4 @@
-# Fix missind `.ssh/authorized_keys`
+# Fix missing `.ssh/authorized_keys`
 
 [fix-authorized_keys.yml][] from [infra-play-users][] is a simple
 idempotent playbook that can create missing `.ssh/authorized_keys`
