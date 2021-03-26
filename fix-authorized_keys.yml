@@ -1,0 +1,45 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- hosts: g_default
+  gather_facts: true
+  become: true
+  
+  vars:
+    file: .ssh/authorized_keys
+    macros:
+      usermode: &usermode
+        owner: '{{ user }}'
+        group: '{{ user }}'
+        mode: 0700
+  
+  tasks:
+
+    - vars: &vars
+        home: '{% if ohai_etc.passwd[user] is not defined %}{{ lookup("lines", "! : user " + user + " unknown") }}{% else %}{{ ohai_etc.passwd[user].dir }}{% endif %}'
+        users: '{% if one is defined %}{{ [ one ] }}{% else %}{{ ohai_etc.group.ssh.members | difference(ohai_etc.group.sudo.members) }}{% endif %}'
+        path: '{{ home }}/{{ file }}'
+      loop: '{{ users }}'
+      loop_control: { loop_var: user }
+      stat: { path: '{{ path }}' }
+      register: st
+
+    - vars:
+        <<: *vars
+        user: '{{ item.user }}'
+      file:
+        dest: '{{ path | dirname }}'
+        state: directory
+        <<: *usermode
+      loop: '{{ st.results }}'
+      loop_control: { label: '{{ user}}' }
+      when: item.stat.exists == false
+    
+    - vars: { <<: *vars }
+      copy:
+        force: false
+        content: ''
+        dest: '{{ path }}'
+        <<: *usermode
+      loop: '{{ users }}'
+      loop_control: { loop_var: user }
