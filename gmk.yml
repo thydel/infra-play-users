@@ -64,6 +64,11 @@
   conf: thyepi
   version: master
 
+- git: git@github.com:Epiconcept-Paris/infra-data-user-accounts.git
+  name: data-user-accounts
+  conf: thyepi
+  version: master
+
 - git: git@github.com:Epiconcept-Paris/infra-password-store.git
   name: password-store
   conf: thyepi
