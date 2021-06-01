@@ -9,8 +9,10 @@
 - name: Create user
   hosts: '{{ hostvars.localhost.Hosts }}'
   gather_facts: False
-  vars_files: [ paths.yml ]
+  
+  vars_files: [ '{{ "paths" + ("-" + set if set is defined else "") + ".yml" }}' ]
   vars:
+    pass_subdir: '{{ "users/" + ("alien/" + set if set is defined else "linux") }}'
     sudosh: /usr/local/bin/sudosh
     bash: /bin/bash
   tasks:
