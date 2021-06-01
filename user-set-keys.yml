@@ -9,7 +9,9 @@
 - name: Setup user keys
   hosts: '{{ hostvars.localhost.Hosts }}'
   gather_facts: False
-  vars_files: [ paths.yml ]
+
+  vars_files: [ '{{ "paths" + ("-" + set if set is defined else "") + ".yml" }}' ]
+
   tasks:
 
     - { meta: noop, vars: { macros: &ro { changed_when: False, check_mode: False }}}
