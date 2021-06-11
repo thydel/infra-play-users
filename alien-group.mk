@@ -24,7 +24,7 @@ $(group.d):; mkdir -p $@
 $(tmp)/jc: | $(group.d); git -C $(@D) clone git@github.com:kellyjonbrazil/jc.git
 jc := /usr/local/bin/jc
 ~ := $(jc)
-$~: $(tmp)/jc; (cd $<; pip3 install --no-color --upgrade --user -e .)
+$~: | $(tmp)/jc; (cd $<; pip3 install --no-color --upgrade --user -e .)
 jc: phony $~
 
 ~ := $(group.d)/%
