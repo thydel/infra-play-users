@@ -2,6 +2,8 @@
 .hide
 inventory
 data
+repo
+tmp
 .cache
 plugins
 log
