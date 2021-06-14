@@ -1,0 +1,18 @@
+{
+    "changed": {
+	"comment": "Changed by debian openssh-server package",
+	"conf": {
+	    "ChallengeResponseAuthentication": [ "no" ],
+	    "X11Forwarding": [ "yes" ],
+	    "PrintMotd": [ "no" ],
+	    "UsePAM": [ "1" ]
+	}
+    },
+    "added": {
+	"comment": "Added by debian openssh-server package",
+	"conf": { 
+	    "AcceptEnv": [ "LANG", "LC_*" ],
+	    "Subsystem": [ "sftp", "/usr/lib/openssh/sftp-server" ]
+	}
+    }
+}
