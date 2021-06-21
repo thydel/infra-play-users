@@ -1,6 +1,6 @@
 ---
 
-- hosts: 'backup4:rebond2:g_oxa:!g_poweredoff:!n_s1adm'
+- hosts: 'backup4:rebond2:g_oxa:esistn99:!g_poweredoff:!n_s1adm'
   gather_facts: False
   run_once: True
   tasks:
