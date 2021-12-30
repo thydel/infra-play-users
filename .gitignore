@@ -15,3 +15,5 @@ ext
 vault-pass.py
 private-repos.yml
 keys.yml
+.gmk
+.hide.txt

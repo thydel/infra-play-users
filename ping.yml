@@ -1,0 +1,2 @@
+[ { hosts: g_poweredon, gather_facts: False, strategy: free, tasks: [ { ping: } ] } ]
+
