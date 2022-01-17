@@ -4,7 +4,7 @@ def inventory: "inventory='" + join(":") + "'";
 def md: "md='" + (map("`" + . + "`") | join(", ") + "'");
 def yml: "yml='" + "[" + join(", ") + "]'";
 def sh: "sh=(" + join(" ") + ")";
-def txt: join(" ");
+def txt: join("\n");
 
 [inputs]
   | map({ ansible_hostname, ohai_etc })
